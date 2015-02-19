@@ -218,7 +218,7 @@ public class MainActivity extends ActionBarActivity implements
             //send intent to take photo with camera
             dispatchTakePictureIntent();
 
-        Toast.makeText(this, "TAKE PHOTO", Toast.LENGTH_LONG);
+        //Toast.makeText(this, "TAKE PHOTO", Toast.LENGTH_LONG);
         //}
     }
 
