@@ -2,10 +2,12 @@ package de.hni_develop.triptracker;
 
 import android.content.pm.PackageManager;
 import android.location.Criteria;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -40,10 +42,36 @@ public class MainActivity extends ActionBarActivity implements
     protected LocationManager mLocationManager;
     protected ToggleButton mResToggleGpsOnOff;
 
+    protected LocationListener mLocationListener;
+
 
     private TripTracker tripTracker;
 
     private static String TAG_LAST_LOCATION = "LAST-LOCATION";
+
+
+    final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            double latitude = location.getLatitude();
+            Log.i("LOCATION", String.valueOf(latitude));
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,11 +173,21 @@ public class MainActivity extends ActionBarActivity implements
         Criteria providerCriteria = new Criteria();
         String providerSelection = mLocationManager.getBestProvider(providerCriteria, true);
 
-        Toast.makeText(this, providerSelection, Toast.LENGTH_LONG);
+        Looper locationLooper = Looper.myLooper();
+
+
+        Toast.makeText(this, providerSelection, Toast.LENGTH_LONG).show();
         Log.i("LOCATION", providerSelection);
 
-        return mLocationManager.getLastKnownLocation(providerSelection);
+        Location currentLocation = mLocationManager.getLastKnownLocation(providerSelection);
+        mLocationManager.requestSingleUpdate(providerSelection, locationListener, locationLooper);
+
+
+        return currentLocation;
     }
+
+
+
 
 
     /***************************
@@ -213,12 +251,12 @@ public class MainActivity extends ActionBarActivity implements
      * CAMERA
      ***************************/
     public void takePhoto() {
-        Toast.makeText(this, "TAKE PHOTO", Toast.LENGTH_LONG);
+        Toast.makeText(this, "TAKE PHOTO", Toast.LENGTH_LONG).show();
         //if(getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             //send intent to take photo with camera
             dispatchTakePictureIntent();
 
-        //Toast.makeText(this, "TAKE PHOTO", Toast.LENGTH_LONG);
+        //Toast.makeText(this, "TAKE PHOTO", Toast.LENGTH_LONG).show();
         //}
     }
 
@@ -236,7 +274,7 @@ public class MainActivity extends ActionBarActivity implements
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                Toast.makeText(this, "Error create photo file", Toast.LENGTH_LONG);
+                Toast.makeText(this, "Error create photo file", Toast.LENGTH_LONG).show();
             }
             //continue only if the file was successfully created
             if (photoFile != null) {
@@ -277,6 +315,7 @@ public class MainActivity extends ActionBarActivity implements
     public void actionUpdateGpsPosition(View eventSource) {
         updateGpsPosition();
         Log.i("LOCATION", "BUTTON");
+        getLastLocation();
         getCurrentLocation();
     }
 
