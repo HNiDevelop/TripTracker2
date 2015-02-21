@@ -315,8 +315,12 @@ public class MainActivity extends ActionBarActivity implements
     public void actionUpdateGpsPosition(View eventSource) {
         updateGpsPosition();
         Log.i("LOCATION", "BUTTON");
+<<<<<<< Updated upstream
         getLastLocation();
         getCurrentLocation();
+=======
+        Location newLoc = getCurrentLocation();
+>>>>>>> Stashed changes
     }
 
     public void updateGpsPosition() {
